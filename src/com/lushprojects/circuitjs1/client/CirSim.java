@@ -1107,6 +1107,7 @@ MouseOutHandler, MouseWheelHandler {
     	mainMenuBar.addItem(getClassCheckItem(Locale.LS("Add Resistor"), "ResistorElm"));
 
     	MenuBar passMenuBar = new MenuBar(true);
+    	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Test Wire"), "TestWireElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Capacitor"), "CapacitorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Capacitor (polarized)"), "PolarCapacitorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Inductor"), "InductorElm"));
@@ -5921,6 +5922,7 @@ MouseOutHandler, MouseWheelHandler {
     	case 214: return new CCVSElm(x1, y1, x2, y2, f, st);
     	case 215: return new CCCSElm(x1, y1, x2, y2, f, st);
     	case 216: return new OhmMeterElm(x1, y1, x2, y2, f, st);
+    	case 300: return new TestWireElm(x1, y1, x2, y2, f, st);
 	case 350: return new ThermistorNTCElm(x1, y1, x2, y2, f, st);
     	case 368: return new TestPointElm(x1, y1, x2, y2, f, st);
     	case 370: return new AmmeterElm(x1, y1, x2, y2, f, st);
@@ -6153,7 +6155,8 @@ MouseOutHandler, MouseWheelHandler {
     	// if you take out UserDefinedLogicElm, it will break people's saved shortcuts
     	if (n=="UserDefinedLogicElm" || n=="CustomLogicElm")
     	    	return (CircuitElm) new CustomLogicElm(x1, y1);
-    	
+    	if (n=="TestWireElm")
+			return (CircuitElm) new TestWireElm(x1, y1);
     	if (n=="TestPointElm")
     	    	return new TestPointElm(x1, y1);
     	if (n=="AmmeterElm")

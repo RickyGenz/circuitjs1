@@ -4,7 +4,8 @@ ohms.txt Ohm's Law
 resistors.txt Resistors
 cap.txt Capacitor
 induct.txt Inductor
->lrc.txt LRC Circuit
+lrc.txt LRC Circuit
+>lrc-test.txt Test LRC Circuit
 voltdivide.txt Voltage Divider
 pot.txt Potentiometer
 potdivide.txt Potentiometer Divider
