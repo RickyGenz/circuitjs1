@@ -211,7 +211,7 @@ class CapacitorElm extends CircuitElm {
 		return new EditInfo("Initial Voltage (on Reset)", initialVoltage);
 	    if (n == 3)
 		return new EditInfo("Series Resistance (0 = infinite)", seriesResistance);
-	    // if you add more things here, check PolarCapacitorElm
+	    // if you add more things here, check PolarCapacitorElm and VariableCapacitorElm
 	    return null;
 	}
 	public void setEditValue(int n, EditInfo ei) {
