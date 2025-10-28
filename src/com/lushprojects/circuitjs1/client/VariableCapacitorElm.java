@@ -5,8 +5,8 @@
  * This component will be the same as the Capacitor component,
  * but with an added input so the value of the capacitance can be
  * changed by an external source (modulation). Changing the
- * modulation changes the capacitance: a capacitor with 100uF when
- * modulation is 0v and then 1uF when modulation is 10v.
+ * modulation changes the capacitance: a capacitor with 100 uF when
+ * modulation is 0 V and then 1 uF when modulation is 10 V.
  */
 
 package com.lushprojects.circuitjs1.client;
@@ -85,8 +85,8 @@ public class VariableCapacitorElm extends CapacitorElm {
 	/**
 	 * Interpolate the capacitance based on a modulation voltage.
 	 *
-	 * @param modulationVoltage   The current modulation voltage
-	 * @return                    Interpolated capacitance (µF)
+	 * @param modulationVoltage   The current modulation voltage (V)
+	 * @return                    Interpolated capacitance (F)
 	 */
 	public double interpCapacitance(double modulationVoltage) {
 
@@ -102,7 +102,7 @@ public class VariableCapacitorElm extends CapacitorElm {
 	}
 
 	void startIteration() {
-		super.capacitance = interpCapacitance(volts[2]);
+		super.setCapacitance(interpCapacitance(volts[2]));
 		super.startIteration();
 	}
 
@@ -113,13 +113,13 @@ public class VariableCapacitorElm extends CapacitorElm {
 	}
 	public EditInfo getEditInfo(int n) {
 		if (n == 4)
-			return new EditInfo("Capacitance at Low Voltage", capacitanceLow, 1e-12, 1);
+			return new EditInfo("Capacitance (F) at Low Voltage", capacitanceLow, 1e-12, 1);
 		if (n == 5)
-			return new EditInfo("Capacitance at High Voltage", capacitanceHigh, 1e-12, 1);
+			return new EditInfo("Capacitance (F) at High Voltage", capacitanceHigh, 1e-12, 1);
 		if (n == 6)
-			return new EditInfo("Low Modulation Voltage", voltageLow, -1000, 1000);
+			return new EditInfo("Low Modulation Voltage (V)", voltageLow, -1000, 1000);
 		if (n == 7)
-			return new EditInfo("High Modulation Voltage", voltageHigh, -1000, 1000);
+			return new EditInfo("High Modulation Voltage (V)", voltageHigh, -1000, 1000);
 		return super.getEditInfo(n);
 	}
 	public void setEditValue(int n, EditInfo ei) {
