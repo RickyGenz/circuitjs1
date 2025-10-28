@@ -90,19 +90,28 @@ public class VariableCapacitorElm extends CapacitorElm {
 	 */
 	public double interpCapacitance(double modulationVoltage) {
 
-		/* Clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
+		/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
 		if (modulationVoltage < voltageLow) {
 			modulationVoltage = voltageLow;
 		} else if (modulationVoltage > voltageHigh) {
 			modulationVoltage = voltageHigh;
 		}
 
-		/* Linear interpolation: C(v) = Clow + (Chigh - Clow) * ((v - Vlow) / (Vhigh - Vlow)) */
+		/* linear interpolation: C(v) = Clow + (Chigh - Clow) * ((v - Vlow) / (Vhigh - Vlow)) */
 		return capacitanceLow + (capacitanceHigh - capacitanceLow) * ((modulationVoltage - voltageLow) / (voltageHigh - voltageLow));
 	}
 
 	void startIteration() {
+		/* calc starting energy */
+		double e = 0.5 * super.getCapacitance() * Math.pow(volts[2], 2);
+
+		/* modify capacitance */
 		super.setCapacitance(interpCapacitance(volts[2]));
+
+		/* preserve energy continuity */
+		double v = Math.sqrt(2 * e / super.getCapacitance());
+		volts[2] = v;
+
 		super.startIteration();
 	}
 
