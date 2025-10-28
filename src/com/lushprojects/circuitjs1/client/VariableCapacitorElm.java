@@ -18,11 +18,13 @@ public class VariableCapacitorElm extends CapacitorElm {
 	 * capacitanceHigh   Capacitance when modulation = voltageHigh (e.g., 1 µF)
 	 * voltageLow        Voltage which produces capacitanceLow (e.g., 0 V)
 	 * voltageHigh       Voltage which produces capacitanceHigh (e.g., 10 V)
+	 * clampVoltage      Clamp the modulation voltage to [voltageLow, voltageHigh]
 	 */
 	double capacitanceLow = 100e-6; /* 100 µF */
 	double capacitanceHigh = 1e-6; /* 1 µF */
 	double voltageLow = 0.0; /* 0 V */
 	double voltageHigh = 10.0; /* 10 V */
+	boolean clampVoltage = true;
 
 	public VariableCapacitorElm(int xx, int yy) {
 		super(xx, yy);
@@ -34,12 +36,13 @@ public class VariableCapacitorElm extends CapacitorElm {
 		capacitanceHigh = new Double(st.nextToken()).doubleValue();
 		voltageLow = new Double(st.nextToken()).doubleValue();
 		voltageHigh = new Double(st.nextToken()).doubleValue();
+		clampVoltage = new Boolean(st.nextToken()).booleanValue();
 		noDiagonal = true;
 	}
 
 	int getDumpType() { return 300; }
 	String dump() {
-		return super.dump() + " " + capacitanceLow + " " + capacitanceHigh + " " + voltageLow + " " + voltageHigh;
+		return super.dump() + " " + capacitanceLow + " " + capacitanceHigh + " " + voltageLow + " " + voltageHigh + " " + clampVoltage;
 	}
 
 	Point point3, lead3, arrow1, arrow2;
@@ -90,15 +93,19 @@ public class VariableCapacitorElm extends CapacitorElm {
 	 */
 	public double interpCapacitance(double modulationVoltage) {
 
-		/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
-		if (modulationVoltage < voltageLow) {
-			modulationVoltage = voltageLow;
-		} else if (modulationVoltage > voltageHigh) {
-			modulationVoltage = voltageHigh;
+		if (clampVoltage) {
+			/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
+			if (modulationVoltage < voltageLow) {
+				modulationVoltage = voltageLow;
+			} else if (modulationVoltage > voltageHigh) {
+				modulationVoltage = voltageHigh;
+			}
+		} else {
+			modulationVoltage = Math.abs(modulationVoltage);
 		}
 
-		/* linear interpolation: C(v) = Clow + (Chigh - Clow) * ((v - Vlow) / (Vhigh - Vlow)) */
-		return capacitanceLow + (capacitanceHigh - capacitanceLow) * ((modulationVoltage - voltageLow) / (voltageHigh - voltageLow));
+		/* linear interpolation: C(v) = Clow + ((v - Vlow) * (Chigh - Clow) / (Vhigh - Vlow)) */
+		return capacitanceLow + ((modulationVoltage - voltageLow) * (capacitanceHigh - capacitanceLow) / (voltageHigh - voltageLow));
 	}
 
 	void startIteration() {
@@ -129,6 +136,8 @@ public class VariableCapacitorElm extends CapacitorElm {
 			return new EditInfo("Low Modulation Voltage (V)", voltageLow, -1000, 1000);
 		if (n == 7)
 			return new EditInfo("High Modulation Voltage (V)", voltageHigh, -1000, 1000);
+		if (n == 8)
+			return EditInfo.createCheckbox("Clamp Modulation Voltage", clampVoltage);
 		return super.getEditInfo(n);
 	}
 	public void setEditValue(int n, EditInfo ei) {
@@ -140,6 +149,8 @@ public class VariableCapacitorElm extends CapacitorElm {
 			voltageLow = (ei.value > 1000) ? 1000 : (ei.value < -1000) ? -1000 : ei.value;
 		if (n == 7)
 			voltageHigh = (ei.value > 1000) ? 1000 : (ei.value < -1000) ? -1000 : ei.value;
+		if (n == 8)
+			clampVoltage = ei.checkbox.getState();
 		super.setEditValue(n, ei);
 	}
 	int getShortcut() { return 0; }

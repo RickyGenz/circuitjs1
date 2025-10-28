@@ -18,11 +18,13 @@ public class VariableInductorElm extends InductorElm {
 	 * inductanceHigh   Inductance when modulation = voltageHigh (e.g., 100 mH)
 	 * voltageLow       Voltage which produces inductanceLow (e.g., 0 V)
 	 * voltageHigh      Voltage which produces inductanceHigh (e.g., 10 V)
+	 * clampVoltage     Clamp the modulation voltage to [voltageLow, voltageHigh]
 	 */
 	double inductanceLow = 10; /* 1 H */
 	double inductanceHigh = 0.1; /* 100 mH */
 	double voltageLow = 0.0; /* 0 V */
 	double voltageHigh = 10.0; /* 10 V */
+	boolean clampVoltage = true;
 
 	public VariableInductorElm(int xx, int yy) {
 		super(xx, yy);
@@ -34,12 +36,13 @@ public class VariableInductorElm extends InductorElm {
 		inductanceHigh = new Double(st.nextToken()).doubleValue();
 		voltageLow = new Double(st.nextToken()).doubleValue();
 		voltageHigh = new Double(st.nextToken()).doubleValue();
+		clampVoltage = new Boolean(st.nextToken()).booleanValue();
 		noDiagonal = true;
 	}
 
 	int getDumpType() { return 301; }
 	String dump() {
-		return super.dump() + " " + inductanceLow + " " + inductanceHigh + " " + voltageLow + " " + voltageHigh;
+		return super.dump() + " " + inductanceLow + " " + inductanceHigh + " " + voltageLow + " " + voltageHigh + " " + clampVoltage;
 	}
 
 	Point point3, lead3, arrow1, arrow2;
@@ -85,15 +88,19 @@ public class VariableInductorElm extends InductorElm {
 	 */
 	public double interpInductance(double modulationVoltage) {
 
-		/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
-		if (modulationVoltage < voltageLow) {
-			modulationVoltage = voltageLow;
-		} else if (modulationVoltage > voltageHigh) {
-			modulationVoltage = voltageHigh;
+		if (clampVoltage) {
+			/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
+			if (modulationVoltage < voltageLow) {
+				modulationVoltage = voltageLow;
+			} else if (modulationVoltage > voltageHigh) {
+				modulationVoltage = voltageHigh;
+			}
+		} else {
+			modulationVoltage = Math.abs(modulationVoltage);
 		}
 
-		/* linear interpolation: I(v) = Ilow + (Ihigh - Ilow) * ((v - Vlow) / (Vhigh - Vlow)) */
-		return inductanceLow + (inductanceHigh - inductanceLow) * ((modulationVoltage - voltageLow) / (voltageHigh - voltageLow));
+		/* linear interpolation: L(v) = Llow + ((v - Vlow) * (Lhigh - Llow) / (Vhigh - Vlow)) */
+		return inductanceLow + ((modulationVoltage - voltageLow) * (inductanceHigh - inductanceLow) / (voltageHigh - voltageLow));
 	}
 
 	void startIteration() {
@@ -124,6 +131,8 @@ public class VariableInductorElm extends InductorElm {
 			return new EditInfo("Low Modulation Voltage (V)", voltageLow, -1000, 1000);
 		if (n == 6)
 			return new EditInfo("High Modulation Voltage (V)", voltageHigh, -1000, 1000);
+		if (n == 7)
+			return EditInfo.createCheckbox("Clamp Modulation Voltage", clampVoltage);
 		return super.getEditInfo(n);
 	}
 	public void setEditValue(int n, EditInfo ei) {
@@ -135,6 +144,8 @@ public class VariableInductorElm extends InductorElm {
 			voltageLow = (ei.value > 1000) ? 1000 : (ei.value < -1000) ? -1000 : ei.value;
 		if (n == 6)
 			voltageHigh = (ei.value > 1000) ? 1000 : (ei.value < -1000) ? -1000 : ei.value;
+		if (n == 7)
+			clampVoltage = ei.checkbox.getState();
 		super.setEditValue(n, ei);
 	}
 	int getShortcut() { return 0; }
