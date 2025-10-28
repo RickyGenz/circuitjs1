@@ -42,13 +42,23 @@ public class VariableCapacitorElm extends CapacitorElm {
 		return super.dump() + " " + capacitanceLow + " " + capacitanceHigh + " " + voltageLow + " " + voltageHigh;
 	}
 
-	Point point3, lead3;
+	Point point3, lead3, arrow1, arrow2;
 	void setPoints() {
 		super.setPoints();
 
+		/* ensure the modulation voltage input is snapped to the grid */
 		adjustLeadsToGrid(false, false);
-		point3 = interpPoint(lead1, lead2, .5, 0);
-		lead3 = interpPoint(lead1, lead2, .25, 6);
+		point3 = interpPoint(lead1, lead2, 0.5, 0);
+		lead3 = interpPoint(point1, point2, 0.35, 12);
+
+		/* restore the original CapacitorElm leads */
+		double f = (dn/2-4)/dn;
+		lead1 = interpPoint(point1, point2, f);
+		lead2 = interpPoint(point1, point2, 1-f);
+
+		/* calc arrow */
+		arrow1 = interpPoint(point1, point2, 0.38, 4);
+		arrow2 = interpPoint(point1, point2, 0.40, 12);
 	}
 
 	void draw(Graphics g) {
@@ -56,6 +66,15 @@ public class VariableCapacitorElm extends CapacitorElm {
 
 		setVoltageColor(g, volts[2]);
 		drawThickLine(g, point3, lead3);
+
+		/* draw arrow */
+		g.context.setLineWidth(3.0);
+		g.context.beginPath();
+		g.context.moveTo(lead3.x, lead3.y);
+		g.context.lineTo(arrow1.x, arrow1.y);
+		g.context.moveTo(lead3.x, lead3.y);
+		g.context.lineTo(arrow2.x, arrow2.y);
+		g.context.stroke();
 	}
 
 	int getPostCount() { return 3; }
