@@ -1109,6 +1109,7 @@ MouseOutHandler, MouseWheelHandler {
     	MenuBar passMenuBar = new MenuBar(true);
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Capacitor"), "CapacitorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Capacitor (polarized)"), "PolarCapacitorElm"));
+    	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Capacitor (variable)"), "VariableCapacitorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Inductor"), "InductorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Inductor (variable)"), "VariableInductorElm"));
     	passMenuBar.addItem(getClassCheckItem(Locale.LS("Add Switch"), "SwitchElm"));
@@ -5922,6 +5923,7 @@ MouseOutHandler, MouseWheelHandler {
     	case 214: return new CCVSElm(x1, y1, x2, y2, f, st);
     	case 215: return new CCCSElm(x1, y1, x2, y2, f, st);
     	case 216: return new OhmMeterElm(x1, y1, x2, y2, f, st);
+    	case 300: return new VariableCapacitorElm(x1, y1, x2, y2, f, st);
     	case 301: return new VariableInductorElm(x1, y1, x2, y2, f, st);
 	case 350: return new ThermistorNTCElm(x1, y1, x2, y2, f, st);
     	case 368: return new TestPointElm(x1, y1, x2, y2, f, st);
@@ -5985,6 +5987,8 @@ MouseOutHandler, MouseWheelHandler {
     		return (CircuitElm) new CapacitorElm(x1, y1);
     	if (n=="PolarCapacitorElm")
 		return (CircuitElm) new PolarCapacitorElm(x1, y1);
+    	if (n=="VariableCapacitorElm")
+    		return (CircuitElm) new VariableCapacitorElm(x1, y1);
     	if (n=="InductorElm")
     		return (CircuitElm) new InductorElm(x1, y1);
     	if (n=="VariableInductorElm")
