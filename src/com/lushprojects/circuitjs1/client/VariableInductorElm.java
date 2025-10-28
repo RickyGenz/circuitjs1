@@ -85,19 +85,28 @@ public class VariableInductorElm extends InductorElm {
 	 */
 	public double interpInductance(double modulationVoltage) {
 
-		/* Clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
+		/* clamp the modulation voltage to the valid range [voltageLow, voltageHigh] */
 		if (modulationVoltage < voltageLow) {
 			modulationVoltage = voltageLow;
 		} else if (modulationVoltage > voltageHigh) {
 			modulationVoltage = voltageHigh;
 		}
 
-		/* Linear interpolation: I(v) = Ilow + (Ihigh - Ilow) * ((v - Vlow) / (Vhigh - Vlow)) */
+		/* linear interpolation: I(v) = Ilow + (Ihigh - Ilow) * ((v - Vlow) / (Vhigh - Vlow)) */
 		return inductanceLow + (inductanceHigh - inductanceLow) * ((modulationVoltage - voltageLow) / (voltageHigh - voltageLow));
 	}
 
 	void startIteration() {
+		/* calc starting energy */
+		double e = 0.5 * super.getInductance() * Math.pow(volts[2], 2);
+
+		/* modify inductance */
 		super.setInductance(interpInductance(volts[2]));
+
+		/* preserve energy continuity */
+		double v = Math.sqrt(2 * e / super.getInductance());
+		volts[2] = v;
+
 		super.startIteration();
 	}
 
