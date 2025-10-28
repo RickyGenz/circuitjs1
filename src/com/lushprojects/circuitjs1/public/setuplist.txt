@@ -14,7 +14,9 @@ norton.txt Norton's Theorem
 -
 +A/C Circuits
 capac.txt Capacitor
+capac-var.txt Capacitor (variable)
 inductac.txt Inductor
+inductac-var.txt Inductor (variable)
 capmultcaps.txt Caps of Various Capacitances
 capmultfreq.txt Caps w/ Various Frequencies
 indmultind.txt Inductors of Various Inductances
