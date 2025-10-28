@@ -99,6 +99,7 @@ package com.lushprojects.circuitjs1.client;
 	    }
             if (n == 2)
                 return new EditInfo("Initial Current (on Reset) (A)", initialCurrent);
+		// if you add more things here, check VariableInductorElm
 	    return null;
 	}
 	
