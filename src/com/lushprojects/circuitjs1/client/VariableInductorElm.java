@@ -114,6 +114,8 @@ public class VariableInductorElm extends InductorElm {
 		double v = Math.sqrt(2 * e / super.getInductance());
 		volts[2] = v;
 
+		sim.needAnalyze();
+
 		super.startIteration();
 	}
 
@@ -149,6 +151,11 @@ public class VariableInductorElm extends InductorElm {
 		super.setEditValue(n, ei);
 	}
 	int getShortcut() { return 0; }
+
+	@Override
+	String getScopeText(int v) {
+		return "Inductor (variable)" + ", " + getUnitText(super.getInductance(), "H");
+	}
 
 	@Override
 	public void setInductance(double l) throws UnsupportedOperationException {

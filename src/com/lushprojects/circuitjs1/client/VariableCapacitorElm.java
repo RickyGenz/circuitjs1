@@ -119,6 +119,8 @@ public class VariableCapacitorElm extends CapacitorElm {
 		double v = Math.sqrt(2 * e / super.getCapacitance());
 		volts[2] = v;
 
+		sim.needAnalyze();
+
 		super.startIteration();
 	}
 
@@ -154,6 +156,11 @@ public class VariableCapacitorElm extends CapacitorElm {
 		super.setEditValue(n, ei);
 	}
 	int getShortcut() { return 0; }
+
+	@Override
+	String getScopeText(int v) {
+		return "Capacitor (variable)" + ", " + getUnitText(super.getCapacitance(), "F");
+	}
 
 	@Override
 	public void setCapacitance(double c) throws UnsupportedOperationException {
